@@ -1,0 +1,2 @@
+ros2_dir: "~/github/julia_ros_ws/"
+package_dir: "~/github/julia_code/"

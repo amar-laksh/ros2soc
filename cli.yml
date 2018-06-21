@@ -1,0 +1,18 @@
+name: ros2soc
+version: "0.1.0"
+author: amar.lakshya <amar.lakshya@xaviers.edu.in>
+about: cli tool to cross-compile, package, send and execute ros2 packages to the SoC.
+args:
+    - PACKAGE:
+        help: Sets the ros2 package to be sent to the SoC
+        index: 1
+        required: true
+    - IP:
+        help: Sets the ip of the SoC
+        default_value: raspberrypi.local
+        index: 2
+    - CONFIG:
+        short: c
+        long: config
+        help: Sets a custom config file
+        takes_value: true
