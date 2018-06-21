@@ -25,6 +25,7 @@ fn main() -> std::io::Result<()> {
     let matches = App::from_yaml(yaml_file).get_matches();
 
     let package = matches.value_of("PACKAGE").unwrap();
+    let package_bool  = if package == "#" { "" } else { "--only-package="};
     let username = matches.value_of("USERNAME").unwrap();
     let ip = matches.value_of("IP").unwrap();
 
@@ -32,20 +33,20 @@ fn main() -> std::io::Result<()> {
     let package_dir = env::var("PACKAGE_DIR").unwrap_or(format!("/home/{}/ros2_ws/", env::var("USER").unwrap()));
 
     //println!("values are: {}, {}, {}, {}", ros2_dir, package_dir, package, ip);
-    println!("\nBuilding your package...\n");
 
-    if Path::new(&ros2_dir).exists() {
+
+    if Path::new(&ros2_dir).exists() && Path::new(&package_dir).exists() {
         // Check if package is fine and Start with the cross-compiling
-
+        println!("\nBuilding your package...\n");
         let output = run_bash(
             &format!(
-                ". {}/install/setup.bash && cd {} && ament build --only-package={}"
-                , ros2_dir, package_dir, package
+                ". {}/install/setup.bash && cd {} && ament build {}{}"
+                , ros2_dir, package_dir, package_bool, package
                 )
             );
 
-        println!("Package Built!\n");
         println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
+        println!("Package Built!\n");
 
         println!("Syncing package with SoC...\n");
         let output = run_bash(
@@ -55,8 +56,8 @@ fn main() -> std::io::Result<()> {
                 )
             );
 
-        println!("Package Synced!\n");
         println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
+        println!("Package Synced!\n");
 
 
         println!("Running package with SoC...\nPlease choose your executable:\n\n");

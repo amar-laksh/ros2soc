@@ -6,7 +6,7 @@ args:
     - PACKAGE:
         help: Sets the ros2 package to be sent to the SoC
         index: 1
-        required: true
+        default_value: "#"
     - USERNAME:
         help: Sets the username for the SoC SSH
         index: 2
