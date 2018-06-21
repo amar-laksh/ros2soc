@@ -11,8 +11,3 @@ args:
         help: Sets the ip of the SoC
         default_value: raspberrypi.local
         index: 2
-    - CONFIG:
-        short: c
-        long: config
-        help: Sets a custom config file
-        takes_value: true
