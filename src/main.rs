@@ -92,13 +92,13 @@ fn main() -> std::io::Result<()> {
 #[cfg(test)]
 mod tests {
     extern crate assert_cli;
-    use super::*;
 
     #[test]
     fn main_binary_works() {
         assert_cli::Assert::main_binary()
             .with_env(assert_cli::Environment::inherit().insert("ROS2_DIR", "/home/amar/github/julia_ros_ws"))
             .with_env(assert_cli::Environment::inherit().insert("PACKAGE_DIR", "/home/amar/github/julia_code"))
+            .with_args(&["-l","1"])
             .stderr()
             .is("")
             .unwrap();
