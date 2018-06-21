@@ -15,3 +15,8 @@ args:
         help: Sets the ip of the SoC
         default_value: raspberrypi.local
         index: 3
+    - LEVEL:
+        help: "Sets the level of actions to take\n\t1. For just building\n\t2. For sending\n\t3. For executing"
+        short: l
+        multiple: true
+        default_value: "3"

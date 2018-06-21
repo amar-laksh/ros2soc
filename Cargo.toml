@@ -4,5 +4,5 @@ version = "0.1.0"
 authors = ["amar.lakshya <amar.lakshya@xaviers.edu.in>"]
 
 [dependencies]
-yaml-rust = "0.4"
 clap = {version = "2.31", features = ["yaml", "suggestions"]}
+assert_cli = "0.6"
