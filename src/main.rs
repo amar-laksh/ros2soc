@@ -7,7 +7,7 @@ use std::process::*;
 
 use clap::App;
 
-fn run_bash(command: &str) -> bool {
+fn run_bash(command: &str) -> std::process::Output {
     let output = Command::new("/usr/bin/bash")
         .args(&["-c", command
         ]).output().expect("failed to execeute process");
@@ -16,7 +16,7 @@ fn run_bash(command: &str) -> bool {
         println!("stderr:\n{}", String::from_utf8_lossy(&output.stderr));
         exit(256)
     }
-    return output.status.success()
+    return output
 }
 
 fn main() -> std::io::Result<()> {
@@ -37,7 +37,7 @@ fn main() -> std::io::Result<()> {
     if Path::new(&ros2_dir).exists() {
         // Check if package is fine and Start with the cross-compiling
 
-        run_bash(
+        let output = run_bash(
             &format!(
                 ". {}/install/setup.bash && cd {} && ament build --only-package={}"
                 , ros2_dir, package_dir, package
@@ -45,10 +45,10 @@ fn main() -> std::io::Result<()> {
             );
 
         println!("Package Built!\n");
-        //println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
+        println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
 
         println!("Syncing package with SoC...\n");
-        run_bash(
+        let output = run_bash(
             &format!(
                 "rsync -avz --del {}/ {}@{}:{}/",
                 package_dir, username, ip, package_dir
@@ -56,10 +56,20 @@ fn main() -> std::io::Result<()> {
             );
 
         println!("Package Synced!\n");
-        //println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
+        println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
 
 
-        println!("Running package with SoC...\n");
+        println!("Running package with SoC...\nPlease choose your executable:\n\n");
+        let output = run_bash(
+            &format!(
+                "ssh {}@{} '(find {}/build/{} -maxdepth 1-type f ! -name \"*.*\" -executable)'"
+                , username, ip, package_dir, package
+                )
+            );
+
+        println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
+
+
 
     } else {
         // Download ROS2 and cross-compile it
