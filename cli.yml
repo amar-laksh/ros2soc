@@ -7,7 +7,11 @@ args:
         help: Sets the ros2 package to be sent to the SoC
         index: 1
         required: true
+    - USERNAME:
+        help: Sets the username for the SoC SSH
+        index: 2
+        default_value: pi
     - IP:
         help: Sets the ip of the SoC
         default_value: raspberrypi.local
-        index: 2
+        index: 3
