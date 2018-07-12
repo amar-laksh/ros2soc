@@ -7,14 +7,18 @@ args:
         help: Sets the ros2 package to be sent to the SoC
         index: 1
         default_value: "#"
+    - DEST:
+        help: Sets the destination for the package on the rpi
+        default_value: /home/pi/ros2_package
+        index: 2
     - USERNAME:
         help: Sets the username for the SoC SSH
-        index: 2
+        index: 3
         default_value: pi
     - IP:
         help: Sets the ip of the SoC
         default_value: raspberrypi.local
-        index: 3
+        index: 4
     - LEVEL:
         help: "Sets the level of actions to take\n\t1. For just building\n\t2. For sending\n\t3. For executing"
         short: l

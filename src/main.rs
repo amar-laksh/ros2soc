@@ -3,6 +3,7 @@ extern crate clap;
 use std::env;
 use std::path::Path;
 use std::process::*;
+use std::io;
 
 use clap::App;
 
@@ -24,6 +25,7 @@ fn main() -> std::io::Result<()> {
     let matches = App::from_yaml(yaml_file).get_matches();
 
     let package = matches.value_of("PACKAGE").unwrap();
+    let destination = matches.value_of("DEST").unwrap_or("/home/pi/ros2_package");
     // terrible hack to ensure that we build all packages if none given
     let package_bool  = if package == "#" { "" } else { "--only-package="};
     let username = matches.value_of("USERNAME").unwrap();
@@ -33,7 +35,8 @@ fn main() -> std::io::Result<()> {
     let ros2_dir = env::var("ROS2_DIR").unwrap_or(format!("/home/{}/ros2_ws/", env::var("USER").unwrap()));
     let package_dir = env::var("PACKAGE_DIR").unwrap_or(format!("/home/{}/ros2_ws/", env::var("USER").unwrap()));
 
-    //println!("values are: {}, {}, {}, {}, {}", ros2_dir, package_dir, package, ip, level);
+    println!("values are:\n\nros2_dir:{}\npackage_dir:{}\npackage:{}\nip:{}\nlevel:{}\n"
+             , ros2_dir, package_dir, package, ip, level);
 
 
     if Path::new(&ros2_dir).exists() && Path::new(&package_dir).exists() {
@@ -56,7 +59,7 @@ fn main() -> std::io::Result<()> {
             let output = run_bash(
                 &format!(
                     "rsync -avz --del {}/ {}@{}:{}/",
-                    package_dir, username, ip, package_dir
+                    package_dir, username, ip, destination
                     )
                 );
 
@@ -68,12 +71,39 @@ fn main() -> std::io::Result<()> {
             println!("Running package on SoC...\nPlease choose your executable:\n\n");
             let output = run_bash(
                 &format!(
-                    "ssh {}@{} '(find {}/build/{} -maxdepth 1-type f ! -name \"*.*\" -executable)'"
-                    , username, ip, package_dir, package
+                    "ssh {}@{} '(find {}/build/{} -maxdepth 1 -type f ! -name \"*.*\" -executable)'"
+                    , username, ip, destination, package
                     )
                 );
-
-            println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
+            let mut n_execs: u32 = 0;
+            for i in String::from_utf8_lossy(&output.stdout).lines() {
+                n_execs += 1;
+                println!("{}:{}\n", n_execs, i);
+            }
+            let mut _text = String::new();
+            io::stdin().read_line(&mut _text).expect("failed to read line");
+            let _input = match _text.trim().parse::<u32>() {
+                Ok(_input) => {
+                    if _input > n_execs {
+                        println!("Sorry you entered the wrong number for the executable");
+                        exit(256);
+                    }
+                    _input
+                },
+                Err(e) => {
+                    println!("please input a number ({})", e);
+                    exit(256);
+                }
+            };
+            
+            println!("Running executable {}  on SoC...\n", _input);
+            let output = run_bash(
+                &format!(
+                    "ssh {}@{} '{}'"
+                    , username, ip, String::from_utf8_lossy(&output.stdout).lines().nth(_input as usize).unwrap()
+                    )
+                );
+            println!("output:\n{:?}\n", &output.stdout);
         }
 
         else if level < 1 || level > 3 {
