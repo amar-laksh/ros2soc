@@ -35,9 +35,9 @@ fn main() -> std::io::Result<()> {
     let ros2_dir = env::var("ROS2_DIR").unwrap_or(format!("/home/{}/ros2_ws/", env::var("USER").unwrap()));
     let package_dir = env::var("PACKAGE_DIR").unwrap_or(format!("/home/{}/ros2_ws/", env::var("USER").unwrap()));
 
-    println!("values are:\n\nros2_dir:{}\npackage_dir:{}\npackage:{}\nip:{}\nlevel:{}\n"
-             , ros2_dir, package_dir, package, ip, level);
-
+/*     println!("values are:\n\nros2_dir:{}\npackage_dir:{}\npackage:{}\nip:{}\nlevel:{}\n" */
+             // , ros2_dir, package_dir, package, ip, level);
+/*  */
 
     if Path::new(&ros2_dir).exists() && Path::new(&package_dir).exists() {
         // Check if package is fine and Start with the cross-compiling
