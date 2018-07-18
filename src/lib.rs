@@ -50,7 +50,7 @@ fn _choose_exectuable(output: &std::process::Output) -> usize {
 }
 
 impl Ros2soc {
-    pub fn new(matches: clap::ArgMatches) -> Result<Ros2soc, &'static str> {
+    pub fn new(matches: clap::ArgMatches) -> Result<Self, &'static str> {
         let package: String = matches.values_of("PACKAGE").unwrap().collect();
         let destination = matches.values_of("DEST").unwrap().collect();
 
@@ -80,12 +80,12 @@ impl Ros2soc {
         })
     }
 
-    pub fn cross_compile(conf: &Ros2soc) {
-        if Path::new(&conf.ros2_dir).exists() && Path::new(&conf.package_dir).exists() {
+    pub fn cross_compile_package(&mut self) {
+        if Path::new(&self.ros2_dir).exists() && Path::new(&self.package_dir).exists() {
             println!("\nBuilding your package...\n");
             let output = _run_bash(&format!(
                 ". {}/install/setup.bash && cd {} && ament build {}{}",
-                conf.ros2_dir, conf.package_dir, conf.package_prefix, conf.package
+                self.ros2_dir, self.package_dir, self.package_prefix, self.package
             ));
 
             println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
@@ -93,29 +93,29 @@ impl Ros2soc {
         }
     }
 
-    pub fn sync_package(conf: &Ros2soc) {
+    pub fn sync_package(&mut self) {
         println!("Syncing package with SoC...\n");
         let output = _run_bash(&format!(
             "rsync -avz --del {}/ {}@{}:{}/",
-            conf.package_dir, conf.username, conf.ip, conf.destination
+            self.package_dir, self.username, self.ip, self.destination
         ));
 
         println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
         println!("Package Synced!\n");
     }
 
-    pub fn run_package(conf: &Ros2soc) {
+    pub fn run_package(&mut self) {
         println!("Running package on SoC...\nPlease choose your executable:\n\n");
         let output = _run_bash(&format!(
             "ssh {}@{} '(find {}/build/{} -maxdepth 1 -type f ! -name \"*.*\" -executable)'",
-            conf.username, conf.ip, conf.destination, conf.package
+            self.username, self.ip, self.destination, self.package
         ));
         let _input = _choose_exectuable(&output);
         println!("Running executable {}  on SoC...\n", _input);
         let output = _run_bash(&format!(
             "ssh {}@{} '{}'",
-            conf.username,
-            conf.ip,
+            self.username,
+            self.ip,
             String::from_utf8_lossy(&output.stdout)
                 .lines()
                 .nth(_input as usize)

@@ -8,13 +8,15 @@ use ros2soc::Ros2soc;
 fn main() -> std::io::Result<()> {
     let yaml_file = load_yaml!("../cli.yml");
     let matches = App::from_yaml(yaml_file).get_matches();
-    let conf = Ros2soc::new(matches);
-    Ros2soc::cross_compile(&conf.unwrap());
-
-    /*     println!("values are:\n\nros2_dir:{}\npackage_dir:{}\npackage:{}\nip:{}\nlevel:{}\n" */
-    // , ros2_dir, package_dir, package, ip, level);
-    /*  */
-
+    let mut ros2soc = Ros2soc::new(matches).unwrap();
+    match &ros2soc.level {
+        1 => ros2soc.cross_compile_package(),
+        2 => ros2soc.sync_package(),
+        3 => ros2soc.run_package(),
+        _ => {
+            println!("wrong level entered!");
+        }
+    }
     Ok(())
 }
 
