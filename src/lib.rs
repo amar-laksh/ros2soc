@@ -58,7 +58,7 @@ impl Ros2soc {
         let package_prefix = if package == "#" {
             String::from("")
         } else {
-            String::from("--only-package=")
+            String::from("--packages-select ")
         };
         let username = matches.values_of("USERNAME").unwrap().collect();
         let ip = matches.values_of("IP").unwrap().collect();
@@ -84,7 +84,7 @@ impl Ros2soc {
         if Path::new(&self.ros2_dir).exists() && Path::new(&self.package_dir).exists() {
             println!("\nBuilding your package...\n");
             let output = _run_bash(&format!(
-                ". {}/install/setup.bash && cd {} && ament build {}{}",
+                ". {}/install/setup.bash && cd {} && colcon build {}{}",
                 self.ros2_dir, self.package_dir, self.package_prefix, self.package
             ));
 

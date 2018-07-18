@@ -1,4 +1,3 @@
-#[macro_use]
 extern crate ros2soc;
 extern crate clap;
 
