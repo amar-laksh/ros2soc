@@ -1,6 +1,5 @@
 extern crate clap;
 use std::env;
-use std::io::stdin;
 use std::path::Path;
 use std::process::*;
 use std::result::Result;
@@ -27,26 +26,6 @@ fn _run_bash(command: &str) -> std::process::Output {
         exit(256)
     }
     return output;
-}
-
-fn _choose_exectuable(output: &std::process::Output) -> usize {
-    let n_execs = String::from_utf8_lossy(&output.stdout).lines().count();
-    let mut _text = String::new();
-    stdin().read_line(&mut _text).expect("failed to read line");
-    let _input = match _text.trim().parse::<usize>() {
-        Ok(_input) => {
-            if _input > n_execs {
-                println!("Sorry you entered the wrong number for the executable");
-                exit(256);
-            }
-            _input
-        }
-        Err(e) => {
-            println!("please input a number ({})", e);
-            exit(256);
-        }
-    };
-    return _input;
 }
 
 impl Ros2soc {
@@ -92,38 +71,74 @@ impl Ros2soc {
             println!("Package Built!\n");
         }
     }
-
     pub fn sync_package(conf: &Ros2soc) {
-        println!("Syncing package with SoC...\n");
-        let output = _run_bash(&format!(
-            "rsync -avz --del {}/ {}@{}:{}/",
-            conf.package_dir, conf.username, conf.ip, conf.destination
-        ));
 
-        println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
-        println!("Package Synced!\n");
-    }
+println!("Syncing package with SoC...\n");
+let output = run_bash(
+&format!(
+"rsync -avz --del {}/ {}@{}:{}/",
+package_dir, username, ip, destination
+)
+);
 
-    pub fn run_package(conf: &Ros2soc) {
-        println!("Running package on SoC...\nPlease choose your executable:\n\n");
-        let output = _run_bash(&format!(
-            "ssh {}@{} '(find {}/build/{} -maxdepth 1 -type f ! -name \"*.*\" -executable)'",
-            conf.username, conf.ip, conf.destination, conf.package
-        ));
-        let _input = _choose_exectuable(&output);
-        println!("Running executable {}  on SoC...\n", _input);
-        let output = _run_bash(&format!(
-            "ssh {}@{} '{}'",
-            conf.username,
-            conf.ip,
-            String::from_utf8_lossy(&output.stdout)
-                .lines()
-                .nth(_input as usize)
-                .unwrap()
-        ));
-        println!("output:\n{:?}\n", &output.stdout);
+println!("stdout:\n{}", String::from_utf8_lossy(&output.stdout));
+println!("Package Synced!\n");
     }
 }
+
+//
+// if level >= 2 {
+
+// }
+//
+// if level == 3  {
+// println!("Running package on SoC...\nPlease choose your executable:\n\n");
+// let output = run_bash(
+// &format!(
+// "ssh {}@{} '(find {}/build/{} -maxdepth 1 -type f ! -name \"*.*\" -executable)'"
+// , username, ip, destination, package
+// )
+// );
+// let mut n_execs: u32 = 0;
+// for i in String::from_utf8_lossy(&output.stdout).lines() {
+// n_execs += 1;
+// println!("{}:{}\n", n_execs, i);
+// }
+// let mut _text = String::new();
+// io::stdin().read_line(&mut _text).expect("failed to read line");
+// let _input = match _text.trim().parse::<u32>() {
+// Ok(_input) => {
+// if _input > n_execs {
+// println!("Sorry you entered the wrong number for the executable");
+// exit(256);
+// }
+// _input
+// },
+// Err(e) => {
+// println!("please input a number ({})", e);
+// exit(256);
+// }
+// };
+//
+// println!("Running executable {}  on SoC...\n", _input);
+// let output = run_bash(
+// &format!(
+// "ssh {}@{} '{}'"
+// , username, ip, String::from_utf8_lossy(&output.stdout).lines().nth(_input as usize).unwrap()
+// )
+// );
+// println!("output:\n{:?}\n", &output.stdout);
+// }
+//
+// else if level < 1 || level > 3 {
+// println!("Sorry you entered a wrong level. :(");
+// exit(256);
+// }
+//
+// } else {
+// // Download ROS2 and cross-compile it
+//
+/* } */
 
 #[cfg(test)]
 mod tests {
