@@ -57,7 +57,11 @@ impl Ros2soc {
         };
         let username = matches.values_of("USERNAME").unwrap().collect();
         let ip = matches.values_of("IP").unwrap().collect();
-        let level: u8 = matches.value_of("LEVEL").unwrap().parse::<u8>().unwrap_or(3);
+        let level: u8 = matches
+            .value_of("LEVEL")
+            .unwrap()
+            .parse::<u8>()
+            .unwrap_or(3);
 
         let ros2_dir =
             env::var("ROS2_DIR").unwrap_or(format!("/home/{}/ros2_ws/", env::var("USER").unwrap()));
