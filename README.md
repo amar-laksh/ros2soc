@@ -3,6 +3,6 @@
 
 ## Run
 
-``bash
-cargo run --release ros2soc --help
+``
+cargo run --bin ros2soc -- --help
 ``
