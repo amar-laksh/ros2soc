@@ -1,5 +1,5 @@
 [package]
-name = "ros2osc" # the name of the package
+name = "ros2soc" # the name of the package
 version = "0.1.0"    # the current version, obeying semver
 authors = ["amar.lakshya <amar.lakshya@xaviers.edu.in"]
 description = "A small package to allow cross-compilation from Dev machine to SoC (Raspberry Pi) of ROS2 packages and running them."
