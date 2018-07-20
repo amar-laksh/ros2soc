@@ -9,9 +9,18 @@ fn main() -> std::io::Result<()> {
     let matches = App::from_yaml(yaml_file).get_matches();
     let mut ros2soc = Ros2soc::new(matches).unwrap();
     match &ros2soc.level {
-        1 => ros2soc.cross_compile_package(),
-        2 => ros2soc.sync_package(),
-        3 => ros2soc.run_package(),
+        1 => {
+            ros2soc.cross_compile_package()
+        },
+        2 => {
+            ros2soc.cross_compile_package();
+            ros2soc.sync_package()
+        },
+        3 => {
+            ros2soc.cross_compile_package();
+            ros2soc.sync_package();
+            ros2soc.run_package()
+        },
         _ => {
             println!("wrong level entered!");
         }
