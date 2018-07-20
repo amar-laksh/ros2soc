@@ -21,11 +21,6 @@ fn _run_bash(command: &str) -> std::process::Output {
         .args(&["-c", command])
         .output()
         .expect("failed to execeute process");
-
-    if !output.status.success() {
-        println!("stderr:\n{}", String::from_utf8_lossy(&output.stderr));
-        exit(256)
-    }
     return output;
 }
 
@@ -62,7 +57,7 @@ impl Ros2soc {
         };
         let username = matches.values_of("USERNAME").unwrap().collect();
         let ip = matches.values_of("IP").unwrap().collect();
-        let level: u8 = matches.value_of("LEVEL").unwrap().parse::<u8>().unwrap();
+        let level: u8 = matches.value_of("LEVEL").unwrap().parse::<u8>().unwrap_or(3);
 
         let ros2_dir =
             env::var("ROS2_DIR").unwrap_or(format!("/home/{}/ros2_ws/", env::var("USER").unwrap()));
@@ -127,8 +122,12 @@ impl Ros2soc {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn _run_bash_works() {
+        assert_eq!(_run_bash("echo 1").status.success(), true);
+        assert_eq!(_run_bash("123").status.success(), false);
     }
+
 }

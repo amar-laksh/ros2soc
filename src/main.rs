@@ -33,19 +33,17 @@ mod tests {
     extern crate assert_cli;
 
     #[test]
-    fn main_binary_works() {
+    fn no_args_error_works() {
         assert_cli::Assert::main_binary()
-            .with_env(
-                assert_cli::Environment::inherit()
-                    .insert("ROS2_DIR", "/home/amar/github/julia_ros_ws"),
-            )
-            .with_env(
-                assert_cli::Environment::inherit()
-                    .insert("PACKAGE_DIR", "/home/amar/github/julia_code"),
-            )
-            .with_args(&["-l", "1"])
-            .stderr()
-            .is("")
+            .fails()
+            .unwrap();
+    }
+
+    #[test]
+    fn level_arg_works() {
+        assert_cli::Assert::main_binary()
+            .with_args(&["1"])
+            .succeeds()
             .unwrap();
     }
 }
