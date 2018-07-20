@@ -5,7 +5,7 @@ authors = ["amar.lakshya <amar.lakshya@xaviers.edu.in"]
 description = "A small package to allow cross-compilation from Dev machine to SoC (Raspberry Pi) of ROS2 packages and running them."
 repository = "https://github.com/amar-laksh/ros2soc"
 keywords = ["ros", "soc", "pi"]
-license = "wtfpl"
+license = "MIT-0"
 
 [dependencies]
 clap = {version = "2.31", features = ["yaml", "suggestions"]}
