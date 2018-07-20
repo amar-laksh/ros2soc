@@ -5,7 +5,7 @@ use clap::*;
 use ros2soc::Ros2soc;
 
 fn main() -> std::io::Result<()> {
-    let yaml_file = load_yaml!("../cli.yml");
+    let yaml_file = load_yaml!("./cli.yml");
     let matches = App::from_yaml(yaml_file).get_matches();
     let mut ros2soc = Ros2soc::new(matches).unwrap();
     match &ros2soc.level {
